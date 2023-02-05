@@ -1,0 +1,29 @@
+{
+  "python.autoComplete.extraPaths": [
+    "/home/tom/deepracer/build/enable_deepracer_nav_pkg",
+    "/home/tom/deepracer/install/enable_deepracer_nav_pkg/lib/python3.10/site-packages",
+    "/home/tom/deepracer/build/cmdvel_to_servo_pkg",
+    "/home/tom/deepracer/install/cmdvel_to_servo_pkg/lib/python3.10/site-packages",
+    "/home/tom/deepracer/install/deepracer_interfaces_pkg/local/lib/python3.10/dist-packages",
+    "/opt/ros/humble/lib/python3.10/site-packages",
+    "/opt/ros/humble/local/lib/python3.10/dist-packages",
+    "/home/tom/3laws-dev/ai_supervisor/backend/build/Release/py_bindings",
+    "/home/tom/3laws-dev/ai_supervisor/backend/build/Debug/py_bindings",
+    "/home/tom/3laws-dev/conan/pyModules",
+    "/home/tom/3laws-dev/3laws_library/ROS2/install/lll_msgs/local/lib/python3.10/dist-packages"
+  ],
+  "python.analysis.extraPaths": [
+    "/home/tom/deepracer/build/enable_deepracer_nav_pkg",
+    "/home/tom/deepracer/install/enable_deepracer_nav_pkg/lib/python3.10/site-packages",
+    "/home/tom/deepracer/build/cmdvel_to_servo_pkg",
+    "/home/tom/deepracer/install/cmdvel_to_servo_pkg/lib/python3.10/site-packages",
+    "/home/tom/deepracer/install/deepracer_interfaces_pkg/local/lib/python3.10/dist-packages",
+    "/opt/ros/humble/lib/python3.10/site-packages",
+    "/opt/ros/humble/local/lib/python3.10/dist-packages",
+    "/home/tom/3laws-dev/ai_supervisor/backend/build/Release/py_bindings",
+    "/home/tom/3laws-dev/ai_supervisor/backend/build/Debug/py_bindings",
+    "/home/tom/3laws-dev/conan/pyModules",
+    "/home/tom/3laws-dev/3laws_library/ROS2/install/lll_msgs/local/lib/python3.10/dist-packages"
+  ],
+  "editor.formatOnSave": false
+}

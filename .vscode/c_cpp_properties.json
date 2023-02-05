@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/tom/deepracer/install/deepracer_interfaces_pkg/include/**",
+        "/home/tom/deepracer/install/deepracer_drive_plugin/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/tom/3laws-dev/3laws_library/ROS2/install/lll_msgs/include/**",
+        "/home/tom/deepracer/src/aws-deepracer/deepracer_gazebo/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
