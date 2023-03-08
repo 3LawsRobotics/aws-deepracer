@@ -330,7 +330,7 @@ void GazeboRosDeepRacerDrivePrivate::PublishOdometryTf(const gazebo::common::Tim
 void GazeboRosDeepRacerDrivePrivate::CalcTargetVelAndPosition(double& _target_speed, double& _target_left_steering, double& _target_right_steering)
 {
   auto target_linear = ignition::math::clamp(target_linear_, -max_speed_, max_speed_);
-  auto target_rot = target_rot_ * copysign(1.0, target_linear_);
+  auto target_rot = target_rot_; // * copysign(1.0, target_linear_);
   target_rot = ignition::math::clamp(target_rot, -max_steer_, max_steer_);
 
   double tanSteer = tan(target_rot);

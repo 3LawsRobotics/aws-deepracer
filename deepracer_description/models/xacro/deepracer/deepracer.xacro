@@ -27,10 +27,10 @@ limitations under the License.
 
 
   <!-- default lidar values as present in the DeepRacer device -->
-  <xacro:arg name="lidar_360_degree_sample" default="600" />
+  <xacro:arg name="lidar_360_degree_sample" default="300" />
   <xacro:arg name="lidar_360_degree_horizontal_resolution" default="1" />
-  <xacro:arg name="lidar_360_degree_min_angle" default="-2.61799" />
-  <xacro:arg name="lidar_360_degree_max_angle" default="2.61799" />
+  <xacro:arg name="lidar_360_degree_min_angle" default="-3.110176727" />
+  <xacro:arg name="lidar_360_degree_max_angle" default="3.110176727" />
   <xacro:arg name="lidar_360_degree_min_range" default="0.15" />
   <xacro:arg name="lidar_360_degree_max_range" default="10.0" />
   <xacro:arg name="lidar_360_degree_range_resolution" default="0.01" />
@@ -46,16 +46,16 @@ limitations under the License.
 
   <!-- agent urdf -->
   <xacro:include filename="$(find deepracer_description)/models/xacro/urdf/deepracer_$(arg sensor_type)_urdf.xacro" />
- 
+
   <!-- agent collision -->
   <xacro:include filename="$(find deepracer_description)/models/xacro/collision/deepracer_collision.xacro" />
-  
+
   <!-- agent control -->
   <xacro:include filename="$(find deepracer_description)/models/xacro/control/deepracer_ros_control.xacro" />
-  
+
   <!-- agent material -->
   <xacro:include filename="$(find deepracer_description)/models/xacro/material/deepracer_material.xacro" />
-  
+
   <!-- agent gazebo sensor -->
   <!-- front facing camera-->
   <xacro:if value="${'front_facing_camera' in sensor_type_val}">
@@ -69,4 +69,3 @@ limitations under the License.
 
   <xacro:include filename="$(find deepracer_description)/models/xacro/sensor/deepracer_gazebo_lidar.xacro" />
 </robot>
-
