@@ -157,28 +157,5 @@ def generate_launch_description():
             ),
             robot_state_publisher_node,
             spawn_entity,
-            launch_ros.actions.Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                output='screen',
-                arguments=[
-                    '0.136966',
-                    '0',
-                    '0.143272',
-                    '0',
-                    '0.2618',
-                    '0',
-                    'base_link',
-                    'camera_link',
-                ],
-                parameters=[deepracer_bringup_dir + '/config/static_tf.yaml'],
-            ),
-            launch_ros.actions.Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                output='screen',
-                arguments=['0.02913', '0', '0.884699', '0', '0', '3.1416', 'base_link', 'laser'],
-                parameters=[deepracer_bringup_dir + '/config/static_tf_sim.yaml'],
-            ),
         ]
     )

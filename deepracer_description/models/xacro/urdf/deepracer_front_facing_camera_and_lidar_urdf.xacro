@@ -16,7 +16,7 @@ limitations under the License.
 -->
 <robot
   name="deepracer_single_cam_lidar" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <link 
+  <link
     name="base_link" />
   <link
     name="chassis">
@@ -44,7 +44,7 @@ limitations under the License.
      <mass value="0.042222" />
 	   <inertia ixx="0.0000611771" ixy="0"            ixz="0"
 	                               iyy="0.0000611771" iyz="0"
-	                                                  izz="0.0000944606" />        
+	                                                  izz="0.0000944606" />
     </inertial>
     <visual>
       <origin
@@ -91,7 +91,7 @@ limitations under the License.
      <mass value="0.042222" />
 	   <inertia ixx="0.0000611771" ixy="0"            ixz="0"
 	                               iyy="0.0000611771" iyz="0"
-	                                                  izz="0.0000944606" />        
+	                                                  izz="0.0000944606" />
 
     </inertial>
     <visual>
@@ -181,7 +181,7 @@ limitations under the License.
      <mass value="0.042222" />
 	   <inertia ixx="0.0000611771" ixy="0"            ixz="0"
 	                               iyy="0.0000611771" iyz="0"
-	                                                  izz="0.0000944606" />        
+	                                                  izz="0.0000944606" />
 
     </inertial>
     <visual>
@@ -271,7 +271,7 @@ limitations under the License.
      <mass value="0.042222" />
 	   <inertia ixx="0.0000611771" ixy="0"            ixz="0"
 	                               iyy="0.0000611771" iyz="0"
-	                                                  izz="0.0000944606" />        
+	                                                  izz="0.0000944606" />
 
     </inertial>
     <visual>
@@ -421,8 +421,8 @@ limitations under the License.
     name="hokuyo_joint"
     type="fixed">
     <origin
-      xyz="0.02913 0 0.16145" 
-      rpy="0 0 3.1416" />
+      xyz="0.02913 0 0.16145"
+      rpy="0 0 0" />
     <parent
       link="chassis" />
     <child
