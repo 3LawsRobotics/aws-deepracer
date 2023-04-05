@@ -25,5 +25,6 @@
     "/home/tom/3laws-dev/conan/pyModules",
     "/home/tom/3laws-dev/3laws_library/ROS2/install/lll_msgs/local/lib/python3.10/dist-packages"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cmake.sourceDirectory": "${workspaceFolder}/deepracer_bringup"
 }
