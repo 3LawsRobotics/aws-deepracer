@@ -80,7 +80,10 @@ def generate_launch_description():
                         'launch',
                         'launch.py',
                     )
-                )
+                ),
+                launch_arguments={
+                    'joy': 'true',
+                }.items(),
             ),
         ]
     )
