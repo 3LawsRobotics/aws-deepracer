@@ -85,20 +85,20 @@ def generate_launch_description():
         ]
     )
 
-    # supervisor_3laws = GroupAction(
-    #     [
-    #         SetRemap('laserscan', 'scan'),
-    #         IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource(
-    #                 os.path.join(
-    #                     get_package_share_directory('ai_supervisor_ros2'),
-    #                     'launch',
-    #                     'se2_bicycle_kinematic5.launch.py',
-    #                 )
-    #             )
-    #         ),
-    #     ]
-    # )
+    supervisor_3laws = GroupAction(
+        [
+            SetRemap('laserscan', 'scan'),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        get_package_share_directory('ai_supervisor_ros2'),
+                        'launch',
+                        'se2_bicycle_kinematic5.launch.py',
+                    )
+                )
+            ),
+        ]
+    )
 
     return LaunchDescription(
         [
@@ -110,7 +110,7 @@ def generate_launch_description():
             spawn_deepracer,
             interface_3laws,
             teleop_3laws,
-            # supervisor_3laws,
+            supervisor_3laws,
         ]
     )
 
