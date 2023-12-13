@@ -88,7 +88,7 @@ def generate_launch_description():
         ]
     )
 
-    supervisor_3laws = IncludeLaunchDescription(
+    rdm_3laws = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
                 get_package_share_directory("lll_rdm"),
@@ -98,7 +98,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             "log_level": "debug",
-            "config_filename": "config_deepracer_sim.yaml",
+            "config_filename": "deepracer_config.yaml",
         }.items(),
     )
 
@@ -112,7 +112,7 @@ def generate_launch_description():
             spawn_deepracer,
             interface_3laws,
             teleop_3laws,
-            supervisor_3laws,
+            rdm_3laws,
         ]
     )
 
