@@ -98,7 +98,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             "log_level": "debug",
-            "config_filename": "deepracer_config.yaml",
+            "config_filename": "config_deepracer_sim.yaml",
         }.items(),
     )
 
