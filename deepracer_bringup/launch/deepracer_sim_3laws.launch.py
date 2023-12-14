@@ -64,7 +64,8 @@ def generate_launch_description():
         remappings=[
             ("state_in", "odom"),
             ("state_out", "state"),
-            ("input_in", "/lll/metrics/high_frequency/safe_control_input"),
+            ("input_in", "input_desired"),
+            # ("input_in", "/lll/metrics/high_frequency/safe_control_input"),
             ("input_out", "cmd_vel"),
         ],
     )
@@ -88,19 +89,19 @@ def generate_launch_description():
         ]
     )
 
-    rdm_3laws = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("lll_rdm"),
-                "launch",
-                "rdm.launch.py",
-            )
-        ),
-        launch_arguments={
-            "log_level": "debug",
-            "config_filename": "config_deepracer_sim.yaml",
-        }.items(),
-    )
+    # rdm_3laws = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(
+    #             get_package_share_directory("lll_rdm"),
+    #             "launch",
+    #             "rdm.launch.py",
+    #         )
+    #     ),
+    #     launch_arguments={
+    #         "log_level": "debug",
+    #         "config_filename": "config_deepracer_sim.yaml",
+    #     }.items(),
+    # )
 
     return LaunchDescription(
         [
@@ -112,7 +113,7 @@ def generate_launch_description():
             spawn_deepracer,
             interface_3laws,
             teleop_3laws,
-            rdm_3laws,
+            # rdm_3laws,
         ]
     )
 
