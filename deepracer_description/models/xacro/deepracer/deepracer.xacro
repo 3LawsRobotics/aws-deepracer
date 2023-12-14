@@ -48,7 +48,7 @@ limitations under the License.
   <xacro:include filename="$(find deepracer_description)/models/xacro/urdf/deepracer_$(arg sensor_type)_urdf.xacro" />
 
   <!-- agent collision -->
-  <xacro:include filename="$(find deepracer_description)/models/xacro/collision/deepracer_collision.xacro" />
+  <!--xacro:include filename="$(find deepracer_description)/models/xacro/collision/deepracer_collision.xacro" / -->
 
   <!-- agent control -->
   <xacro:include filename="$(find deepracer_description)/models/xacro/control/deepracer_ros_control.xacro" />
