@@ -63,10 +63,10 @@ public:
   void PublishOdometryMsg(const gazebo::common::Time & _current_time);
 
   /// Calculate the target velocity and position
-  void CalcTargetVelAndPosition(double& _target_speed, double& _target_left_steering, double& _target_right_steering);
+  void CalcTargetVelAndPosition(double& _target_speed, double& _target_rotation);
 
   /// Publish joint velocity and position commands
-  void PublishJointVelAndPositionMsg(const double& _target_speed, const double& _target_left_steering, const double& _target_right_steering);
+  void PublishJointVelAndPositionMsg(const double& _target_left_speed, const double& _target_right_speed);
 
   /// A pointer to the GazeboROS node.
   gazebo_ros::Node::SharedPtr ros_node_;
@@ -78,17 +78,9 @@ public:
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odometry_pub_;
 
   /// Velocity and Position controller publishers
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr left_front_wheel_vel_controller_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr left_wheel_vel_controller_pub_;
 
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr right_front_wheel_vel_controller_pub_;
-
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr left_rear_wheel_vel_controller_pub_;
-
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr right_rear_wheel_vel_controller_pub_;
-
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr left_steering_hinge_position_controller_pub_;
-
-  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr right_steering_hinge_position_controller_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr right_wheel_vel_controller_pub_;
 
   /// Connection to event called at every world iteration.
   gazebo::event::ConnectionPtr update_connection_;
@@ -98,9 +90,6 @@ public:
 
   /// Distance between the wheels, in meters.
   double wheel_separation_;
-
-  /// Distance between front and rear axles, in meters.
-  double wheel_base_;
 
   /// Radius of rear wheels, in meters.
   double wheel_radius_;
@@ -122,9 +111,6 @@ public:
 
   /// Angular velocity in Z received on command (rad/s).
   double target_rot_{0.0};
-
-  /// Angular velocity in Z received on command (rad/s).
-  double steer_{0.0};
 
   /// Update period in seconds.
   double update_period_;
@@ -174,14 +160,11 @@ void GazeboRosDeepRacerDrive::Load(gazebo::physics::ModelPtr _model, sdf::Elemen
   // Get QoS profiles
   const gazebo_ros::QoS & qos = impl_->ros_node_->get_qos();
 
-  impl_->max_speed_ = _sdf->Get<double>("max_speed", 4.0).first;
-  impl_->max_steer_ = _sdf->Get<double>("max_steer", 0.523599).first;
+  impl_->max_speed_ = _sdf->Get<double>("max_speed", 6.0).first;
 
   impl_->wheel_radius_ = _sdf->Get<double>("wheel_radius", 0.03).first;
   // wheel seperation is the distance between the two rear wheels or two front wheels
   impl_->wheel_separation_ = _sdf->Get<double>("wheel_separation", 0.159202).first;
-  // wheel base is the distance between the rear and front wheels
-  impl_->wheel_base_ = _sdf->Get<double>("wheel_base", 0.164023).first;
 
   // Update rate
   auto update_rate = _sdf->Get<double>("update_rate", 100.0).first;
@@ -240,23 +223,11 @@ void GazeboRosDeepRacerDrive::Load(gazebo::physics::ModelPtr _model, sdf::Elemen
   impl_->update_connection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
     std::bind(&GazeboRosDeepRacerDrivePrivate::OnUpdate, impl_.get(), std::placeholders::_1));
 
-  impl_->left_front_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/left_front_wheel_velocity_controller/commands", qos.get_publisher_qos("left_front_wheel_velocity_controller", rclcpp::QoS(1)));
+  impl_->left_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/left_wheel_velocity_controller/commands", qos.get_publisher_qos("left_wheel_velocity_controller", rclcpp::QoS(1)));
 
-  impl_->right_front_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/right_front_wheel_velocity_controller/commands", qos.get_publisher_qos("right_front_wheel_velocity_controller", rclcpp::QoS(1)));
-
-  impl_->left_rear_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/left_rear_wheel_velocity_controller/commands", qos.get_publisher_qos("left_rear_wheel_velocity_controller", rclcpp::QoS(1)));
-
-  impl_->right_rear_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/right_rear_wheel_velocity_controller/commands", qos.get_publisher_qos("right_rear_wheel_velocity_controller", rclcpp::QoS(1)));
-
-  impl_->left_steering_hinge_position_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/left_steering_hinge_position_controller/commands", qos.get_publisher_qos("left_steering_hinge_position_controller", rclcpp::QoS(1)));
-
-  impl_->right_steering_hinge_position_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
-    "/right_steering_hinge_position_controller/commands", qos.get_publisher_qos("right_steering_hinge_position_controller", rclcpp::QoS(1)));
+  impl_->right_wheel_vel_controller_pub_ = impl_->ros_node_->create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/right_wheel_velocity_controller/commands", qos.get_publisher_qos("right_wheel_velocity_controller", rclcpp::QoS(1)));
 
 }
 
@@ -284,11 +255,10 @@ void GazeboRosDeepRacerDrivePrivate::OnUpdate(const gazebo::common::UpdateInfo &
     PublishOdometryTf(_info.simTime);
   }
   // Calculate the velocity and position values and publish the commands
-  double target_speed, target_left_steering, target_right_steering;
-  CalcTargetVelAndPosition(target_speed, target_left_steering, target_right_steering);
-  PublishJointVelAndPositionMsg(target_speed, target_left_steering, target_right_steering);
+  double target_left_speed, target_right_speed;
+  CalcTargetVelAndPosition(target_left_speed, target_right_speed);
+  PublishJointVelAndPositionMsg(target_left_speed,target_right_speed);
   last_update_time_ = _info.simTime;
-  steer_ = (target_left_steering + target_right_steering)/2.;
 }
 
 void GazeboRosDeepRacerDrivePrivate::OnCmdVel(const geometry_msgs::msg::Twist::SharedPtr _msg)
@@ -312,7 +282,6 @@ void GazeboRosDeepRacerDrivePrivate::UpdateOdometryWorld()
   odom_.twist.twist.linear.x = cosf(yaw) * linear.X() + sinf(yaw) * linear.Y();
   odom_.twist.twist.linear.y = cosf(yaw) * linear.Y() - sinf(yaw) * linear.X();
   odom_.twist.twist.angular.z = angular.Z();
-  odom_.twist.twist.angular.x = steer_;
 }
 
 void GazeboRosDeepRacerDrivePrivate::PublishOdometryTf(const gazebo::common::Time & _current_time)
@@ -327,40 +296,28 @@ void GazeboRosDeepRacerDrivePrivate::PublishOdometryTf(const gazebo::common::Tim
   transform_broadcaster_->sendTransform(msg);
 }
 
-void GazeboRosDeepRacerDrivePrivate::CalcTargetVelAndPosition(double& _target_speed, double& _target_left_steering, double& _target_right_steering)
+void GazeboRosDeepRacerDrivePrivate::CalcTargetVelAndPosition(double& _target_left_speed, double& _target_right_speed)
 {
   auto target_linear = ignition::math::clamp(target_linear_, -max_speed_, max_speed_);
   auto target_rot = target_rot_; // * copysign(1.0, target_linear_);
   target_rot = ignition::math::clamp(target_rot, -max_steer_, max_steer_);
 
-  double tanSteer = tan(target_rot);
 
-  _target_left_steering =
-    atan2(tanSteer, 1.0 - wheel_separation_ / 2.0 / wheel_base_ * tanSteer);
-  _target_right_steering =
-    atan2(tanSteer, 1.0 + wheel_separation_ / 2.0 / wheel_base_ * tanSteer);
+  _target_left_speed = target_linear - target_rot * wheel_separation_ / 2.0;
+  _target_right_speed = target_linear + target_rot * wheel_separation_ / 2.0;
 
-  _target_speed = target_linear / wheel_radius_;
 }
 
-void GazeboRosDeepRacerDrivePrivate::PublishJointVelAndPositionMsg(const double& _target_speed, const double& _target_left_steering, const double& _target_right_steering)
+void GazeboRosDeepRacerDrivePrivate::PublishJointVelAndPositionMsg(const double& _target_left_speed, const double& _target_right_speed)
 {
 
-  std_msgs::msg::Float64MultiArray speed_msg;
-  std_msgs::msg::Float64MultiArray left_steer_msg;
-  std_msgs::msg::Float64MultiArray right_steer_msg;
+  std_msgs::msg::Float64MultiArray left_speed_msg;
+  std_msgs::msg::Float64MultiArray right_speed_msg;
 
-  speed_msg.data.push_back(_target_speed);
-  left_steer_msg.data.push_back(_target_left_steering);
-  right_steer_msg.data.push_back(_target_right_steering);
-
-  left_front_wheel_vel_controller_pub_->publish(speed_msg);
-  right_front_wheel_vel_controller_pub_->publish(speed_msg);
-  left_rear_wheel_vel_controller_pub_->publish(speed_msg);
-  right_rear_wheel_vel_controller_pub_->publish(speed_msg);
-  left_steering_hinge_position_controller_pub_->publish(left_steer_msg);
-  right_steering_hinge_position_controller_pub_->publish(right_steer_msg);
-
+  left_speed_msg.data.push_back(_target_left_speed);
+  right_speed_msg.data.push_back(_target_right_speed);
+  left_wheel_vel_controller_pub_->publish(left_speed_msg);
+  right_wheel_vel_controller_pub_->publish(right_speed_msg);
 }
 
 void GazeboRosDeepRacerDrivePrivate::PublishOdometryMsg(const gazebo::common::Time & _current_time)

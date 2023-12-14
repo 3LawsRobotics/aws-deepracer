@@ -1,0 +1,74 @@
+# User specific development files and folders
+## Generic
+.cache
+.clangd
+.vscode
+.codechecker
+.devcontainer.json
+doc/
+#jetbrains IDEs
+.idea
+## Python
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+## Jupyter Notebook
+.ipynb_checkpoints
+wandb/
+
+# Build and run artifacts
+## Generic
+build/
+log/
+logs/
+install/
+devel/
+## C++
+CMakeUserPresets.json
+conan.lock
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json
+## Python
+__pycache__
+*.egg*/
+.thumbs
+.pytest_cache
+.mypy_cache
+## ROS
+**/ROS1/src/CMakeLists.txt
+.catkin_workspace
+
+# 3laws Specific
+.deploy/
+.tmp/
+.build/
+.temp/
+.packages/
+.reports/
+.backend/
+build_deps/
+dashboards_pack/
+**/CI/*config.json
+dev-config.json
+config.json
+demo-config.json
+alpha_customers_info.json
+*.csv
+
+# From old CPS_characterization gitignore
+cps_characterization/outputs/
+
+# Svelte
+.DS_Store
+node_modules
+.svelte-kit
+control_panel/frontend/package
+control_panel/frontend/vite.config.js.timestamp-*
+control_panel/frontend/vite.config.ts.timestamp-*
