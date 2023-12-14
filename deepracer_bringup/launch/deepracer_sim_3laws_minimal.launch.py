@@ -78,7 +78,7 @@ def generate_launch_description():
                         "simulator.launch.py",
                     )
                 ),
-                launch_arguments={"joy": "true", "which": "unicycle5"}.items(),
+                launch_arguments={"joy": "true", "which": "unicycle3"}.items(),
             ),
         ]
     )
@@ -101,7 +101,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument("world", description="SDF world file", default_value=world),
             DeclareLaunchArgument(name="gui", default_value="true"),
-            DeclareLaunchArgument(name="use_sim_time", default_value="false"),
+            DeclareLaunchArgument(name="use_sim_time", default_value="true"),
             gazebo_server_launcher,
             gazebo_client_launcher,
             spawn_deepracer,
