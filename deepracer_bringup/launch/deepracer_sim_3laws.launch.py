@@ -64,7 +64,7 @@ def generate_launch_description():
         remappings=[
             ("state_in", "odom"),
             ("state_out", "state"),
-            ("input_in", "input_filtered"),
+            ("input_in", "/lll/metrics/high_frequency/safe_control_input"),
             ("input_out", "cmd_vel"),
         ],
     )
