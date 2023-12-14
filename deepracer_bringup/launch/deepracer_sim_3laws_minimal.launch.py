@@ -51,7 +51,9 @@ def generate_launch_description():
 
     spawn_deepracer = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(deepracer_bringup_dir, "launch", "deepracer_spawn.launch.py")
+            os.path.join(
+                deepracer_bringup_dir, "launch", "deepracer_spawn_minimal.launch.py"
+            )
         )
     )
 
@@ -60,33 +62,43 @@ def generate_launch_description():
         executable="lll_deepracer_sim_interface",
         output="screen",
         emulate_tty=True,
-        remappings=[
-            ("state_in", "odom"),
-            ("state_out", "state"),
-            ("input_in", "input_desired"),
-            # ("input_in", "/lll/metrics/high_frequency/safe_control_input"),
-            ("input_out", "cmd_vel"),
-        ],
     )
 
-    teleop_3laws = GroupAction(
+    simulator_3laws = GroupAction(
         [
             SetRemap("input", "input_desired"),
             SetRemap("activate", "activate_filter"),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(
-                        get_package_share_directory("lll_unicycle_teleop"),
+                        get_package_share_directory("lll_dynamics_simulator"),
                         "launch",
-                        "launch.py",
+                        "simulator.launch.py",
                     )
                 ),
-                launch_arguments={
-                    "joy": "true",
-                }.items(),
+                launch_arguments={"joy": "true", "which": "unicycle"}.items(),
             ),
         ]
     )
+
+    # teleop_3laws = GroupAction(
+    #     [
+    #         SetRemap("input", "input_desired"),
+    #         SetRemap("activate", "activate_filter"),
+    #         IncludeLaunchDescription(
+    #             PythonLaunchDescriptionSource(
+    #                 os.path.join(
+    #                     get_package_share_directory("lll_unicycle_teleop"),
+    #                     "launch",
+    #                     "launch.py",
+    #                 )
+    #             ),
+    #             launch_arguments={
+    #                 "joy": "true",
+    #             }.items(),
+    #         ),
+    #     ]
+    # )
 
     # rdm_3laws = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
@@ -113,7 +125,7 @@ def generate_launch_description():
             gazebo_client_launcher,
             spawn_deepracer,
             interface_3laws,
-            teleop_3laws,
+            simulator_3laws,
             # rdm_3laws,
         ]
     )
