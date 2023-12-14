@@ -25,9 +25,7 @@ from launch_ros.actions import Node, SetRemap
 
 def generate_launch_description():
     deepracer_bringup_dir = get_package_share_directory("deepracer_bringup")
-    world = os.path.join(
-        deepracer_bringup_dir, "config", "no_roof_small_warehouse.world"
-    )
+    world = os.path.join(deepracer_bringup_dir, "config", "no_roof_small_warehouse.world")
 
     # ros gazebo launcher
     gazebo_dir = get_package_share_directory("gazebo_ros")
@@ -88,25 +86,23 @@ def generate_launch_description():
         ]
     )
 
-    # rdm_3laws = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(
-    #             get_package_share_directory("lll_rdm"),
-    #             "launch",
-    #             "rdm.launch.py",
-    #         )
-    #     ),
-    #     launch_arguments={
-    #         "log_level": "debug",
-    #         "config_filename": "config_deepracer_sim.yaml",
-    #     }.items(),
-    # )
+    rdm_3laws = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("lll_rdm"),
+                "launch",
+                "rdm.launch.py",
+            )
+        ),
+        launch_arguments={
+            "log_level": "debug",
+            "config_filename": "config_deepracer_sim.yaml",
+        }.items(),
+    )
 
     return LaunchDescription(
         [
-            DeclareLaunchArgument(
-                "world", description="SDF world file", default_value=world
-            ),
+            DeclareLaunchArgument("world", description="SDF world file", default_value=world),
             DeclareLaunchArgument(name="gui", default_value="true"),
             DeclareLaunchArgument(name="use_sim_time", default_value="true"),
             gazebo_server_launcher,
@@ -114,7 +110,7 @@ def generate_launch_description():
             spawn_deepracer,
             interface_3laws,
             teleop_3laws,
-            # rdm_3laws,
+            rdm_3laws,
         ]
     )
 
