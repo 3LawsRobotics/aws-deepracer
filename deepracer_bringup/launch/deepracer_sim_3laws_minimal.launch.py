@@ -20,15 +20,13 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, SetRemap
 
 
 def generate_launch_description():
     deepracer_bringup_dir = get_package_share_directory("deepracer_bringup")
-    world_path = get_package_share_directory("aws_robomaker_small_warehouse_world")
-    world = os.path.join(
-        world_path, "worlds", "no_roof_small_warehouse", "no_roof_small_warehouse.world"
-    )
+    world = os.path.join(deepracer_bringup_dir, "config", "no_roof_small_warehouse.world")
 
     # ros gazebo launcher
     gazebo_dir = get_package_share_directory("gazebo_ros")
@@ -52,13 +50,13 @@ def generate_launch_description():
 
     spawn_deepracer = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(deepracer_bringup_dir, "launch", "deepracer_spawn.launch.py")
+            os.path.join(deepracer_bringup_dir, "launch", "deepracer_spawn_minimal.launch.py")
         )
     )
 
     interface_3laws = Node(
         package="lll_deepracer_sim_interface",
-        executable="lll_deepracer_sim_interface",
+        executable="lll_deepracer_sim_interface_viz",
         output="screen",
         emulate_tty=True,
         remappings=[
@@ -67,23 +65,26 @@ def generate_launch_description():
 			("input_out", "cmd_vel"),
             ("input_in", "/lll/metrics/high_frequency/safe_control_input"),
         ],
+        parameters=[
+            {
+                "use_sim_time": LaunchConfiguration("use_sim_time"),
+            },
+        ],
     )
 
-    teleop_3laws = GroupAction(
+    simulator_3laws = GroupAction(
         [
             SetRemap("input", "input_desired"),
             SetRemap("activate", "activate_filter"),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(
-                        get_package_share_directory("lll_path_follower_py"),
+                        get_package_share_directory("lll_dynamics_simulator"),
                         "launch",
-                        "launch.py",
+                        "simulator.launch.py",
                     )
                 ),
-                launch_arguments={
-                    "joy": "true",
-                }.items(),
+                launch_arguments={"joy": "true", "which": "unicycle5"}.items(),
             ),
         ]
     )
@@ -106,12 +107,12 @@ def generate_launch_description():
         [
             DeclareLaunchArgument("world", description="SDF world file", default_value=world),
             DeclareLaunchArgument(name="gui", default_value="true"),
-            DeclareLaunchArgument(name="use_sim_time", default_value="true"),
+            DeclareLaunchArgument(name="use_sim_time", default_value="false"),
             gazebo_server_launcher,
             gazebo_client_launcher,
             spawn_deepracer,
             interface_3laws,
-            teleop_3laws,
+            simulator_3laws,
             rdm_3laws,
         ]
     )
